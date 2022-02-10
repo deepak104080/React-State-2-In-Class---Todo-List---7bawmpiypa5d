@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { nanoid } from "nanoid";
 
 function App() {
   const [toDoItem, setToDoItem] = useState("");
@@ -16,7 +15,7 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
     let obj = {};
-    obj.id = nanoid();
+    obj.id = "abc" + Math.random();
     obj.todotext = toDoItem;
     obj.donestatus = false;
     setToDoList([...toDoList, obj]);

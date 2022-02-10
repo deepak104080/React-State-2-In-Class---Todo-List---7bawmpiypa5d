@@ -101,10 +101,15 @@ function App() {
             {((editStatus !== "" && editStatus !== item.id) ||
               editStatus === "") && (
               <span>
-                <button onClick={() => markEdit(item.id, item.todotext)}>
+                <button
+                  className="edit"
+                  onClick={() => markEdit(item.id, item.todotext)}
+                >
                   Edit
                 </button>
-                <button onClick={() => markDelete(item.id)}>Delete</button>
+                <button className="delete" onClick={() => markDelete(item.id)}>
+                  Delete
+                </button>
               </span>
             )}
             {editStatus !== "" && editStatus === item.id && (

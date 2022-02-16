@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { nanoid } from "nanoid";
 
-function App() {
+function ToDoAssg() {
   const [toDoItem, setToDoItem] = useState("");
   const [toDoList, setToDoList] = useState([]);
   const [editStatus, setEditStatus] = useState("");
@@ -8,54 +9,58 @@ function App() {
   const [toDoItemEdit, setToDoItemEdit] = useState("");
 
   const handleChange = (e) => {
-    //console.log("Inside Handle Change - ", e.target.value);
+    console.log("Inside Handle Change - ", e.target.value);
     setToDoItem(e.target.value);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    let obj = {};
-    obj.id = "abc" + Math.random();
-    obj.todotext = toDoItem;
-    obj.donestatus = false;
-    setToDoList([...toDoList, obj]);
-    setToDoItem("");
+    if (toDoItem !== "") {
+      let obj = {};
+      obj.id = "abc" + Math.random();
+      obj.todotext = toDoItem;
+      obj.donestatus = false;
+      setToDoList([...toDoList, obj]);
+      setToDoItem("");
+    }
   };
 
   const handleChangeEdit = (e) => {
-    //console.log("Inside Handle Change - ", e.target.value);
+    console.log("Inside Handle Change - ", e.target.value);
     setToDoItemEdit(e.target.value);
   };
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
-    let updatedList;
+
     if (toDoItemEdit !== "") {
+      let updatedList;
       updatedList = toDoList.map((item) => {
         if (item.id === editStatus) {
           item.todotext = toDoItemEdit;
         }
         return item;
       });
-    } else {
-      updatedList = toDoList.map((item) => {
-        if (item.id === editStatus) {
-          item.todotext = editText;
-        }
-        return item;
-      });
+      setToDoList(updatedList);
+      setToDoItemEdit("");
+      setEditStatus("");
     }
-    setToDoList(updatedList);
-    setToDoItemEdit("");
-    setEditStatus("");
+    // else {
+    //     updatedList = toDoList.map((item) => {
+    //         if (item.id === editStatus) {
+    //           item.todotext = editText;
+    //         }
+    //         return item;
+    //       });
+    // }
   };
 
   useEffect(() => {
-    //console.log(toDoList);
+    console.log(toDoList);
   }, [toDoList]);
 
   const markEdit = (id, text) => {
-    //console.log("mark edit", id);
+    console.log("mark edit", id);
     setEditStatus(id);
     setEditText(text);
     const updatedList = toDoList.map((item) => {
@@ -68,7 +73,7 @@ function App() {
   };
 
   const markDelete = (id) => {
-    //console.log(id);
+    console.log(id);
     const updatedList = toDoList.filter((item) => {
       return item.id !== id;
     });
@@ -81,12 +86,7 @@ function App() {
       <h3>To Do App</h3>
       <br></br>
       <form onSubmit={handleSubmit}>
-        <textarea
-          id="task"
-          value={toDoItem}
-          placeholder="Enter a new to do"
-          onChange={handleChange}
-        />
+        <textarea id="task" value={toDoItem} onChange={handleChange} />
         <br></br>
         <button variant="primary" type="submit" id="btn">
           Add
@@ -135,4 +135,4 @@ function App() {
   );
 }
 
-export default App;
+export default ToDoAssg;

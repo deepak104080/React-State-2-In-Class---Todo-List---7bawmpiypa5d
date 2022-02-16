@@ -8,7 +8,7 @@ function App() {
   const [toDoItemEdit, setToDoItemEdit] = useState("");
 
   const handleChange = (e) => {
-    console.log("Inside Handle Change - ", e.target.value);
+    //console.log("Inside Handle Change - ", e.target.value);
     setToDoItem(e.target.value);
   };
 
@@ -23,7 +23,7 @@ function App() {
   };
 
   const handleChangeEdit = (e) => {
-    console.log("Inside Handle Change - ", e.target.value);
+    //console.log("Inside Handle Change - ", e.target.value);
     setToDoItemEdit(e.target.value);
   };
 
@@ -51,11 +51,11 @@ function App() {
   };
 
   useEffect(() => {
-    console.log(toDoList);
+    //console.log(toDoList);
   }, [toDoList]);
 
   const markEdit = (id, text) => {
-    console.log("mark edit", id);
+    //console.log("mark edit", id);
     setEditStatus(id);
     setEditText(text);
     const updatedList = toDoList.map((item) => {
@@ -68,7 +68,7 @@ function App() {
   };
 
   const markDelete = (id) => {
-    console.log(id);
+    //console.log(id);
     const updatedList = toDoList.filter((item) => {
       return item.id !== id;
     });

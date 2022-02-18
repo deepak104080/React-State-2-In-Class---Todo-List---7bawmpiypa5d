@@ -1,138 +1,146 @@
-import React, { useState, useEffect } from "react";
-import { nanoid } from "nanoid";
+import React, { useState, useReducer, useRef } from "react";
+import "./../styles/App.css";
 
-function ToDoAssg() {
-  const [toDoItem, setToDoItem] = useState("");
-  const [toDoList, setToDoList] = useState([]);
-  const [editStatus, setEditStatus] = useState("");
-  const [editText, setEditText] = useState("");
-  const [toDoItemEdit, setToDoItemEdit] = useState("");
+function Lister(props) {
+  return (
+    <>
+      <div className="list col-6 bg-light p-3 mt-3 justify-content-center align-self-center">
+        {props.item.name}
+      </div>
+      <div className="col-3 bg-light p-3 mt-3">
+        <button
+          className="edit btn btn-success w-100"
+          onClick={() => props.edit(props.index)}
+        >
+          Edit
+        </button>
+      </div>
+      <div className="col-3 bg-light p-3 mt-3">
+        <button
+          className="delete btn btn-danger w-100"
+          onClick={() => props.dlt(props.index)}
+        >
+          Delete
+        </button>
+      </div>
+    </>
+  );
+}
 
-  const handleChange = (e) => {
-    console.log("Inside Handle Change - ", e.target.value);
-    setToDoItem(e.target.value);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (toDoItem !== "") {
-      let obj = {};
-      obj.id = "abc" + Math.random();
-      obj.todotext = toDoItem;
-      obj.donestatus = false;
-      setToDoList([...toDoList, obj]);
-      setToDoItem("");
-    }
-  };
-
-  const handleChangeEdit = (e) => {
-    console.log("Inside Handle Change - ", e.target.value);
-    setToDoItemEdit(e.target.value);
-  };
-
-  const handleSubmitEdit = (e) => {
-    e.preventDefault();
-
-    if (toDoItemEdit !== "") {
-      let updatedList;
-      updatedList = toDoList.map((item) => {
-        if (item.id === editStatus) {
-          item.todotext = toDoItemEdit;
-        }
-        return item;
-      });
-      setToDoList(updatedList);
-      setToDoItemEdit("");
-      setEditStatus("");
-    }
-    // else {
-    //     updatedList = toDoList.map((item) => {
-    //         if (item.id === editStatus) {
-    //           item.todotext = editText;
-    //         }
-    //         return item;
-    //       });
-    // }
-  };
-
-  useEffect(() => {
-    console.log(toDoList);
-  }, [toDoList]);
-
-  const markEdit = (id, text) => {
-    console.log("mark edit", id);
-    setEditStatus(id);
-    setEditText(text);
-    const updatedList = toDoList.map((item) => {
-      if (item.id === id) {
-        item.donestatus = !item.donestatus;
-      }
-      return item;
-    });
-    setToDoList(updatedList);
-  };
-
-  const markDelete = (id) => {
-    console.log(id);
-    const updatedList = toDoList.filter((item) => {
-      return item.id !== id;
-    });
-    setToDoList(updatedList);
-  };
+function Editor(props) {
+  const [val, setVal] = useState(props.item.name);
 
   return (
-    <div id="main">
-      <br></br>
-      <h3>To Do App</h3>
-      <br></br>
-      <form onSubmit={handleSubmit}>
-        <textarea id="task" value={toDoItem} onChange={handleChange} />
-        <br></br>
-        <button variant="primary" type="submit" id="btn">
-          Add
+    <>
+      <div className="col-9 bg-light p-3 mt-3 justify-content-center align-self-center">
+        <textarea
+          rows="1"
+          className="editTask w-100"
+          onChange={(e) => {
+            setVal(e.target.value);
+          }}
+          value={val}
+        />
+      </div>
+      <div className="col-3 bg-light p-3 mt-3">
+        <button
+          className="saveTask btn btn-success w-100"
+          onClick={() => props.edit({ index: props.index, val })}
+        >
+          Save
         </button>
-      </form>
-      <br></br>
-      {toDoList &&
-        toDoList.map((item) => (
-          <div className="list">
-            <span>{item.todotext}</span>
-            {((editStatus !== "" && editStatus !== item.id) ||
-              editStatus === "") && (
-              <span>
-                <button
-                  className="edit"
-                  onClick={() => markEdit(item.id, item.todotext)}
-                >
-                  Edit
-                </button>
-                <button className="delete" onClick={() => markDelete(item.id)}>
-                  Delete
-                </button>
-              </span>
-            )}
-            {editStatus !== "" && editStatus === item.id && (
-              <span>
-                <form onSubmit={handleSubmitEdit}>
-                  <textarea
-                    value={toDoItemEdit}
-                    placeholder={editText}
-                    className="editTask"
-                    onChange={handleChangeEdit}
-                  />
+      </div>
+    </>
+  );
+}
 
-                  <button variant="primary" type="submit" className="saveTask">
-                    Save
-                  </button>
-                </form>
-              </span>
-            )}
-            <br></br>
-            <br></br>
-          </div>
-        ))}
+function App() {
+  let mainInput = useRef(null);
+
+  const [input, controlInput] = useState("");
+
+  const [tasks, addTask] = useReducer((tasks, task) => {
+    let temp = [...tasks];
+    let tt = {
+      name: task,
+      edit: false
+    };
+    if (task !== "") {
+      mainInput.current.value = "";
+      temp.push(tt);
+    }
+    return temp;
+  }, []);
+
+  const [edit1, editTaskState] = useReducer((edit1, index) => {
+    let temp = [...tasks];
+    temp[index].edit = true;
+    return temp;
+  }, "");
+
+  const [edit2, editTaskInfo] = useReducer((edit2, { index, val }) => {
+    let temp = [...tasks];
+    if (val !== "") {
+      temp[index].name = val;
+      temp[index].edit = false;
+    }
+    return temp;
+  }, "");
+
+  const [edit3, deleteTaskInfo] = useReducer((edit3, index) => {
+    let temp = [...tasks];
+    tasks.splice(index, 1);
+    return temp;
+  }, "");
+
+  return (
+    <div id="main" className="container">
+      <div className="jumbotron row mb-0">
+        <div className="col-12 mb-3 p-2 text-center">
+          <h3>To Do List</h3>
+        </div>
+        <div className="offset-1 col-8">
+          <textarea
+            ref={mainInput}
+            rows="1"
+            className="w-100 h-100"
+            name="task"
+            id="task"
+            onChange={(e) => {
+              e.preventDefault();
+              controlInput(e.target.value);
+            }}
+          />
+        </div>
+        <div className="col-2">
+          <button
+            className="w-100 btn btn-primary"
+            id="btn"
+            onClick={() => {
+              addTask(input);
+            }}
+          >
+            Add
+          </button>
+        </div>
+      </div>
+      <div className="row p-2">
+        {tasks.map((item, index) =>
+          item.edit ? (
+            <Editor key={index} item={item} index={index} edit={editTaskInfo} />
+          ) : (
+            <Lister
+              key={index}
+              item={item}
+              index={index}
+              edit={editTaskState}
+              dlt={deleteTaskInfo}
+            />
+          )
+        )}
+      </div>
     </div>
   );
 }
 
-export default ToDoAssg;
+export default App;
